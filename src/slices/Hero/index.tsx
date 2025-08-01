@@ -12,7 +12,7 @@ import { useGSAP } from "@gsap/react"
 import { View } from "@react-three/drei"
 import Scene from "./Scene"
 import { Bubbles } from "./Bubbles"
-import { FloatingFruits } from "./FloatingFruits"
+// import { FloatingFruits } from "./FloatingFruits"
 import { useStore } from "@/hooks/useStore"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
 

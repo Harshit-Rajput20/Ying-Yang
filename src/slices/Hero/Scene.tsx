@@ -12,9 +12,9 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 gsap.registerPlugin(useGSAP,ScrollTrigger)
 
-type Props = {}
+// type Props = {}
 
-export default function Scene({}: Props) {
+export default function Scene() {
 
    
 
