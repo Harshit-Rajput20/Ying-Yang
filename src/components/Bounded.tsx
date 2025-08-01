@@ -26,27 +26,27 @@
 // };
 
 
-import clsx from "clsx";
-import React from "react";
+// import clsx from "clsx";
+// import React from "react";
 
-type BoundedProps = {
-  as?: any; // allows div, section, or any custom component
-  className?: string;
-  children: React.ReactNode;
-};
+// type BoundedProps = {
+//   as?: any; // allows div, section, or any custom component
+//   className?: string;
+//   children: React.ReactNode;
+// };
 
-export const Bounded = ({
-  as = "section",
-  className,
-  children,
-  ...restProps
-}: BoundedProps) => {
-  const Comp = as;
-  return (
-    <Comp className={clsx("px-4 first:pt-10 md:px-6", className)} {...restProps}>
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center">
-        {children}
-      </div>
-    </Comp>
-  );
-};
+// export const Bounded = ({
+//   as = "section",
+//   className,
+//   children,
+//   ...restProps
+// }: BoundedProps) => {
+//   const Comp = as;
+//   return (
+//     <Comp className={clsx("px-4 first:pt-10 md:px-6", className)} {...restProps}>
+//       <div className="mx-auto flex w-full max-w-7xl flex-col items-center">
+//         {children}
+//       </div>
+//     </Comp>
+//   );
+// };
