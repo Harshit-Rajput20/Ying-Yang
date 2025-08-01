@@ -2,7 +2,7 @@
 
 import { FC, useRef, useState } from "react";
 import { Content } from "@prismicio/client";
-import { PrismicText, SliceComponentProps } from "@prismicio/react";
+import { SliceComponentProps } from "@prismicio/react";
 import FloatingCan from "@/components/FloatingCan";
 import { Center, Environment, View } from "@react-three/drei";
 import clsx from "clsx";
