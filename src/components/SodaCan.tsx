@@ -52,7 +52,7 @@ export function SodaCan({
     bottomCapGeometry,
     capHeight,
     height,
-    radius,
+    
   } = useMemo(() => {
     if (!labelTexture.image) return {};
 
@@ -86,17 +86,17 @@ export function SodaCan({
   }, [labelTexture]);
 
 
- const bodyMaterial = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        map: labelTexture,
-        color: "#ffffff",
-        side: THREE.DoubleSide,
-        roughness: 0.2,
-        metalness: 0.3,
-      }),
-    [labelTexture]
-  );
+//  const bodyMaterial = useMemo(
+//     () =>
+//       new THREE.MeshStandardMaterial({
+//         map: labelTexture,
+//         color: "#ffffff",
+//         side: THREE.DoubleSide,
+//         roughness: 0.2,
+//         metalness: 0.3,
+//       }),
+//     [labelTexture]
+//   );
 
   const capMaterial = useMemo(
     () =>

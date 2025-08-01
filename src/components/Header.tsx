@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { FizziLogo } from "@/components/FizziLogo"
-import { useClerk, UserButton, SignInButton, useUser } from "@clerk/nextjs"
+import {   UserButton, SignInButton, useUser } from "@clerk/nextjs"
 import { useAppContext } from "@/context/AppContext"
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
@@ -14,7 +14,7 @@ type Props = {}
 export default function Header({}: Props) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isSeller} = useAppContext()
+  // const { isSeller} = useAppContext()
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {

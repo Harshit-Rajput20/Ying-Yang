@@ -1,9 +1,9 @@
 "use client"
 import * as THREE from 'three'
 import { useRef } from "react"
-import { Cloud, Clouds, Environment, OrbitControls ,Text } from '@react-three/drei'
+import { Cloud, Clouds, Environment ,Text } from '@react-three/drei'
 import { Content } from '@prismicio/client'
-import { distance } from 'three/tsl'
+// import { distance } from 'three/tsl'
 
 
 import { ScrollTrigger } from "gsap/ScrollTrigger"

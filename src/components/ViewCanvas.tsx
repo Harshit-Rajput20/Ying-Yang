@@ -1,8 +1,8 @@
 "use client";
 import { Canvas } from "@react-three/fiber";
 // import { SodaCan } from "./SodaCan";
-import { Environment,  View} from "@react-three/drei";
-import FloatingCan from "@/components/FloatingCan";
+import {    View} from "@react-three/drei";
+// import FloatingCan from "@/components/FloatingCan";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
  
@@ -11,9 +11,9 @@ const Loader = dynamic(
   {ssr: false},
 )
 
-type Props = {}
+// type Props = {}
 
-export default function ViewCanvas({}: Props) {
+export default function ViewCanvas() {
   return (
     <>
     <Canvas
