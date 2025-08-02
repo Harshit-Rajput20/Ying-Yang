@@ -22,7 +22,7 @@ async function connectDB() {
         }
 
         cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/yingyang`,opts).then(mongoose =>{
-            return mongooses
+            return mongoose
         })
     }
 
