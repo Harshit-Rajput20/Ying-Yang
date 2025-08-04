@@ -3,18 +3,19 @@
 import { useState } from "react"
 import { FizziLogo } from "@/components/FizziLogo"
 import {   UserButton, SignInButton, useUser } from "@clerk/nextjs"
-// import { useAppContext } from "@/context/AppContext"
+import { useAppContext } from "@/context/AppContext"
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
 // ✅ Correct (for App Router)
 import { useRouter } from "next/navigation";
+import Link from "next/link"
 
 // type Props = {}
 
 export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  // const { isSeller} = useAppContext()
+  const { isSeller} = useAppContext()
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {
@@ -30,18 +31,43 @@ export default function Header() {
         </div>
 
         {/* Center Navigation */}
-        <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
-          {["home", "product", "about", "shop"].map((item) => (
-            <a
-              key={item}
-              href={`#${item}`}
-              className="text-sky-900 font-semibold text-lg hover:text-orange-600 transition-colors duration-200 relative group"
-            >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-200 group-hover:w-full"></span>
-            </a>
-          ))}
-        </div>
+        <div className="py-4">
+  <div className="flex items-center justify-center gap-4 lg:gap-12 max-md:hidden">
+    <Link
+      href="/"
+     className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"
+    >
+      Home
+    </Link>
+
+    <Link
+      href="/all-products"
+className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
+      Product
+    </Link>
+
+    <Link
+      href="/about"
+className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
+      About
+    </Link>
+
+    <Link
+      href="/shop"
+className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
+      Shop
+    </Link>
+
+    {isSeller && (
+      <button
+        onClick={() => router.push("/seller")}
+        className="text-xs border px-4 py-1.5 rounded-full border-[#002B56] text-[#002B56]"
+      >
+        Seller Dashboard
+      </button>
+    )}
+  </div>
+</div>
 
         {/* Right Side */}
         <div className="hidden md:flex items-center space-x-4">
