@@ -15,9 +15,7 @@ import Link from "next/link"
 export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  // Bypass typing completely
-const isSeller = (useAppContext() as any)?.isSeller ?? false;
-
+  // const { isSeller } = useAppContext() 
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {
@@ -60,14 +58,14 @@ className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-under
       Shop
     </Link>
 
-    {isSeller && (
+    {/* {isSeller && (
       <button
         onClick={() => router.push("/seller")}
         className="text-xs border px-4 py-1.5 rounded-full border-[#002B56] text-[#002B56]"
       >
         Seller Dashboard
       </button>
-    )}
+    )} */}
   </div>
 </div>
 
