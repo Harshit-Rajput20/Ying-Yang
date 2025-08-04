@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { FizziLogo } from "@/components/FizziLogo"
 import {   UserButton, SignInButton, useUser } from "@clerk/nextjs"
-import { useAppContext } from "@/context/AppContext"
+// import { useAppContext } from "@/context/AppContext"
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
 // ✅ Correct (for App Router)
