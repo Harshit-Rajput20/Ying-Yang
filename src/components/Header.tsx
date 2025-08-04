@@ -15,7 +15,8 @@ import Link from "next/link"
 export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isSeller} = useAppContext()
+  
+  const { isSeller } = useAppContext()
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {
