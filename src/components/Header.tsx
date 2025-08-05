@@ -3,19 +3,21 @@
 import { useState } from "react"
 import { FizziLogo } from "@/components/FizziLogo"
 import {   UserButton, SignInButton, useUser } from "@clerk/nextjs"
-// import { useAppContext } from "@/context/AppContext"
+import { useAppContext } from "@/context/AppContext"
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
 // ✅ Correct (for App Router)
 import { useRouter } from "next/navigation";
 import Link from "next/link"
+import CartButton from "./CartButton"
+import { runThreeCleanup } from "@/lib/threeCleanup" // ✅ Import this
 
 // type Props = {}
 
 export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  // const { isSeller } = useAppContext() 
+  const { isSeller } = useAppContext() 
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {
@@ -58,34 +60,39 @@ className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-under
       Shop
     </Link>
 
-    {/* {isSeller && (
-      <button
-        onClick={() => router.push("/seller")}
-        className="text-xs border px-4 py-1.5 rounded-full border-[#002B56] text-[#002B56]"
-      >
-        Seller Dashboard
-      </button>
-    )} */}
+   {isSeller && (
+  <button
+    onClick={() => {
+      runThreeCleanup(); // ✅ Clean up before navigation
+      router.push("/seller");
+    }}
+    className="text-xs border px-4 py-1.5 rounded-full border-[#002B56] text-[#002B56]"
+  >
+    Seller Dashboard
+  </button>
+)}
   </div>
 </div>
 
         {/* Right Side */}
         <div className="hidden md:flex items-center space-x-4">
           {/* Shopping Bag */}
-          <button className="text-sky-900 hover:text-orange-600 transition-colors duration-200 relative group">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
-              />
-            </svg>
-            <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-              2
-            </span>
-          </button>
-
+           <button
+      onClick={() => {
+        runThreeCleanup(); // ✅ cleanup Three.js and GSAP
+        router.push("/cart"); // ✅ navigate safely
+      }}
+      className="text-sky-900 hover:text-orange-600 transition-colors duration-200 relative group"
+    >
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
+        />
+      </svg>
+    </button>
           {/* 👤 User / Account */}
           {user ? (
            <UserButton>

@@ -4,6 +4,7 @@ import { useRef } from "react"
 import { Cloud, Clouds, Environment ,Text } from '@react-three/drei'
 import { Content } from '@prismicio/client'
 // import { distance } from 'three/tsl'
+// import {   OrbitControls } from "@react-three/drei"
 
 
 import { ScrollTrigger } from "gsap/ScrollTrigger"

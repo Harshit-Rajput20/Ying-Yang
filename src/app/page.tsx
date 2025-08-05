@@ -33,7 +33,7 @@
 import { type Metadata } from "next";
 import { asText } from "@prismicio/client";
 import { SliceZone } from "@prismicio/react";
-import HomeProducts from "@/components/HomeProducts";
+// import HomeProducts from "@/components/HomeProducts";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
@@ -57,7 +57,7 @@ export default async function Home() {
       {/* Manually rendered custom slices */}
       <SkyDive sentence="Art of Ying Yang!" flavor="strawberryLemonade" />
       <Carousel slice={undefined} index={0} slices={[]} context={undefined} />
-      <HomeProducts/>
+      {/* <HomeProducts/> */}
     </>
   );
 }

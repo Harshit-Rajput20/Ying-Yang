@@ -12,21 +12,29 @@ import { useGSAP } from "@gsap/react";
 import { WavyCircles } from "./WavyCircles";
 import { ArrowIcon } from "./ArrowIcon";
 import { SodaCanProps } from "@/components/SodaCan";
+import { runThreeCleanup } from "@/lib/threeCleanup"
+import { useRouter } from "next/navigation";
+
+
 
 gsap.registerPlugin(useGSAP);
 
+
 const SPINS_ON_CHANGE = 8;
+
+
 
 const FLAVORS: {
   flavor: SodaCanProps["flavor"];
   color: string;
   name: string;
+  id: string; // or slug if you use that
 }[] = [
-  { flavor: "blackCherry", color: "#710523", name: "Black Cherry" },
-  { flavor: "grape", color: "#572981", name: "Grape Goodness" },
-  { flavor: "lemonLime", color: "#164405", name: "Lemon Lime" },
-  { flavor: "strawberryLemonade", color: "#690B3D", name: "Strawberry Lemonade" },
-  { flavor: "watermelon", color: "#4B7002", name: "Watermelon Crush" },
+  { flavor: "blackCherry", color: "#710523", name: "Black Cherry", id: "689267c846e14b1cdadcd21e" },
+  { flavor: "grape", color: "#572981", name: "Grape Goodness", id: "6892688546e14b1cdadcd220" },
+  { flavor: "lemonLime", color: "#164405", name: "Lemon Lime", id: "689266aa46e14b1cdadcd216" },
+  { flavor: "strawberryLemonade", color: "#690B3D", name: "Strawberry Lemonade", id: "689263f446e14b1cdadcd20e" },
+  { flavor: "watermelon", color: "#4B7002", name: "Watermelon Crush", id: "6892690e46e14b1cdadcd222" },
 ];
 
 export type CarouselProps = Partial<SliceComponentProps<Content.CarouselSlice>>;
@@ -34,6 +42,8 @@ export type CarouselProps = Partial<SliceComponentProps<Content.CarouselSlice>>;
 const Carousel: FC<CarouselProps> = () => {
   const [currentFlavorIndex, setCurrentFlavorIndex] = useState(0);
   const sodaCanRef = useRef<Group>(null);
+  const router = useRouter();
+
 
   function changeFlavor(index: number) {
     if (!sodaCanRef.current) return;
@@ -120,14 +130,26 @@ const Carousel: FC<CarouselProps> = () => {
       </div>
 
       <div className="relative text-area mx-auto text-center">
-        <div className="text-wrapper text-4xl font-medium">
-          <p>{FLAVORS[currentFlavorIndex].name}</p>
-        </div>
+  <div className="text-wrapper text-4xl font-medium">
+    <p>{FLAVORS[currentFlavorIndex].name}</p>
+  </div>
 
-        <div className="mt-2 text-2xl font-normal opacity-90">
-          Price 300/bottle
-        </div>
-      </div>
+  <div className="mt-2 text-2xl font-normal opacity-90">
+    Price 300/bottle
+  </div>
+
+  <button
+  onClick={() => {
+    runThreeCleanup(); // ✅ Clean up before navigation
+    router.push(`/product/${FLAVORS[currentFlavorIndex].id}`);
+  }}
+  className="mt-4 px-6 py-2 bg-white text-black rounded-full font-medium shadow-md hover:bg-gray-100 transition"
+>
+  Buy Now
+</button>
+
+</div>
+
     </section>
   );
 };
