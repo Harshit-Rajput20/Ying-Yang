@@ -84,7 +84,7 @@ const Orders = () => {
                     ))}
                 </div>
             </div>}
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 };

@@ -37,11 +37,18 @@ import { SliceZone } from "@prismicio/react";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
+import type { Content } from "@prismicio/client";
 
 import SkyDive from "@/slices/SkyDive";
 import Carousel from "@/slices/Carousel";
+import AlternatingText from "@/slices/AlternatingText";
+import BigText from "@/slices/BigText";
+import Footer from "@/components/Footer";
+ 
+// Mocked slice data
 
 export default async function Home() {
+  
   const client = createClient();
   const home = await client.getByUID("page", "home");
 
@@ -57,7 +64,12 @@ export default async function Home() {
       {/* Manually rendered custom slices */}
       <SkyDive sentence="Art of Ying Yang!" flavor="strawberryLemonade" />
       <Carousel slice={undefined} index={0} slices={[]} context={undefined} />
-      {/* <HomeProducts/> */}
+ <AlternatingText
+         
+      />  
+      
+      <BigText/>    {/* <HomeProducts/> */}
+      <Footer/>
     </>
   );
 }

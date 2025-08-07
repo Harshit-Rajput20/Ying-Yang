@@ -1,13 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { FizziLogo } from "@/components/FizziLogo"
-import {   UserButton, SignInButton, useUser } from "@clerk/nextjs"
+import { FizziLogo } from "@/components/FizziLogo" 
+import {   
+  UserButton, 
+  SignInButton, 
+  useUser 
+} from "@clerk/nextjs"
 import { useAppContext } from "@/context/AppContext"
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
 // ✅ Correct (for App Router)
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link"
 import CartButton from "./CartButton"
 import { runThreeCleanup } from "@/lib/threeCleanup" // ✅ Import this
@@ -16,13 +20,29 @@ import { runThreeCleanup } from "@/lib/threeCleanup" // ✅ Import this
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname(); // ✅ Get current pathname
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isSeller } = useAppContext() 
+  const { isSeller } = useAppContext()   
   const { user } = useUser() // ✅ Get user info
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
+
+  // ✅ Helper function to check if route is active
+  const isActiveRoute = (route: string) => {
+    if (route === "/" && pathname === "/") return true;
+    if (route !== "/" && pathname.startsWith(route)) return true;
+    return false;
+  }
+
+  // ✅ Navigation items with their routes
+  const navItems = [
+    { name: "Home", route: "/" },
+    { name: "Product", route: "/all-products" },
+    { name: "About", route: "/About" },
+    { name: "My orders", route: "/my-orders" }
+  ];
 
   return (
     <header className="relative z-20 w-full">
@@ -34,93 +54,94 @@ export default function Header() {
 
         {/* Center Navigation */}
         <div className="py-4">
-  <div className="flex items-center justify-center gap-4 lg:gap-12 max-md:hidden">
-    <Link
-      href="/"
-     className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"
-    >
-      Home
-    </Link>
-
-    <Link
-      href="/all-products"
-className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
-      Product
-    </Link>
-
-    <Link
-      href="/about"
-className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
-      About
-    </Link>
-
-    <Link
-      href="/shop"
-className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-underline"    >
-      Shop
-    </Link>
-
-   {isSeller && (
-  <button
-    onClick={() => {
-      runThreeCleanup(); // ✅ Clean up before navigation
-      router.push("/seller");
-    }}
-    className="text-xs border px-4 py-1.5 rounded-full border-[#002B56] text-[#002B56]"
-  >
-    Seller Dashboard
-  </button>
-)}
-  </div>
-</div>
+          <div className="flex items-center justify-center gap-4 lg:gap-12 max-md:hidden">
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  runThreeCleanup();
+                  router.push(item.route);
+                }}
+                className={`font-semibold transition hover:text-[#d32f2f] no-underline relative ${
+                  isActiveRoute(item.route) 
+                    ? "text-[#d32f2f]" 
+                    : "text-[#002B56]"
+                }`}
+              >
+                {item.name}
+                {/* ✅ Active indicator */}
+                {isActiveRoute(item.route) && (
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#d32f2f] rounded-full"></div>
+                )}
+              </button>
+            ))}
+            
+            {/* Seller Dashboard */}
+            {isSeller && (
+              <button
+                onClick={() => {
+                  runThreeCleanup(); // ✅ Clean up before navigation
+                  router.push("/seller");
+                }}
+                className={`text-xs border px-4 py-1.5 rounded-full transition-all ${
+                  isActiveRoute("/seller")
+                    ? "border-[#d32f2f] text-[#d32f2f] bg-[#d32f2f]/10"
+                    : "border-[#002B56] text-[#002B56] hover:border-[#d32f2f] hover:text-[#d32f2f]"
+                }`}
+              >
+                Seller Dashboard
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Right Side */}
         <div className="hidden md:flex items-center space-x-4">
           {/* Shopping Bag */}
-           <button
-      onClick={() => {
-        runThreeCleanup(); // ✅ cleanup Three.js and GSAP
-        router.push("/cart"); // ✅ navigate safely
-      }}
-      className="text-sky-900 hover:text-orange-600 transition-colors duration-200 relative group"
-    >
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
-        />
-      </svg>
-    </button>
+          <button
+            onClick={() => {
+              runThreeCleanup(); // ✅ cleanup Three.js and GSAP
+              router.push("/cart"); // ✅ navigate safely
+            }}
+            className={`hover:text-orange-600 transition-colors duration-200 relative group ${
+              isActiveRoute("/cart") ? "text-orange-600" : "text-sky-900"
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
+              />
+            </svg>
+            {/* ✅ Active indicator for cart */}
+            {isActiveRoute("/cart") && (
+              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-orange-600 rounded-full"></div>
+            )}
+          </button>
+
           {/* 👤 User / Account */}
           {user ? (
-           <UserButton>
-            <UserButton.MenuItems>
-
-              <UserButton.Action label="Cart" labelIcon={<CartIcon/>} onClick={()=> router.push('/cart')}/>
-              
-            </UserButton.MenuItems>
-
-            <UserButton.MenuItems>
-
-              <UserButton.Action label="My Orders" labelIcon={<BagIcon/>} onClick={()=> router.push('/my-orders')}/>
-              
-            </UserButton.MenuItems>
-            
-             <UserButton.MenuItems>
-                  <UserButton.Action label="Home" labelIcon={<HomeIcon/>} onClick={()=> router.push('/')}/>
+            <UserButton>
+              {/* <UserButton.MenuItems>
+                <UserButton.Action label="Cart" labelIcon={<CartIcon/>} onClick={()=> router.push('/cart')}/>                          
               </UserButton.MenuItems>
               <UserButton.MenuItems>
-                  <UserButton.Action label="Products" labelIcon={<BoxIcon/>} onClick={()=> router.push('/all-products')}/>
+                <UserButton.Action label="My Orders" labelIcon={<BagIcon/>} onClick={()=> router.push('/my-orders')}/>                          
+              </UserButton.MenuItems>                         
+              <UserButton.MenuItems>
+                <UserButton.Action label="Home" labelIcon={<HomeIcon/>} onClick={()=> router.push('/')}/>
               </UserButton.MenuItems>
-              
-           </UserButton>
+              <UserButton.MenuItems>
+                <UserButton.Action label="Products" labelIcon={<BoxIcon/>} onClick={()=> router.push('/all-products')}/>
+              </UserButton.MenuItems> */}                         
+            </UserButton>
           ) : (
             <SignInButton mode="modal">
               <button className="flex items-center gap-2 hover:text-gray-900 transition">
                 <Image
-                  src={assets.user_icon}
+                  src={assets.user_icon || "/placeholder.svg"}
                   alt="user icon"
                   width={20}
                   height={20}
@@ -142,7 +163,15 @@ className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-under
 
         {/* Mobile View */}
         <div className="md:hidden flex items-center space-x-3">
-          <button className="text-sky-900 hover:text-orange-600 transition-colors duration-200 relative">
+          <button 
+            onClick={() => {
+              runThreeCleanup();
+              router.push("/cart");
+            }}
+            className={`hover:text-orange-600 transition-colors duration-200 relative ${
+              isActiveRoute("/cart") ? "text-orange-600" : "text-sky-900"
+            }`}
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -169,53 +198,76 @@ className="text-[#002B56] font-semibold transition hover:text-[#d32f2f] no-under
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white/90 backdrop-blur-sm border-t border-sky-200 animate-in slide-in-from-top duration-200">
           <div className="px-6 py-4 space-y-4">
-            {["home", "product", "about", "shop"].map((item) => (
-              <a
-                key={item}
-                href={`#${item}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-sky-900 font-semibold text-lg hover:text-orange-600 transition-colors duration-200"
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  runThreeCleanup();
+                  router.push(item.route);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`block font-semibold text-lg hover:text-orange-600 transition-colors duration-200 w-full text-left relative ${
+                  isActiveRoute(item.route) 
+                    ? "text-orange-600" 
+                    : "text-sky-900"
+                }`}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-              </a>
+                {item.name}
+                {/* ✅ Active indicator for mobile */}
+                {isActiveRoute(item.route) && (
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-orange-600 rounded-r"></div>
+                )}
+              </button>
             ))}
 
-             {user ? (
-           <UserButton>
-            <UserButton.MenuItems>
-
-              <UserButton.Action label="Cart" labelIcon={<CartIcon/>} onClick={()=> router.push('/cart')}/>
-              
-            </UserButton.MenuItems>
-
-            <UserButton.MenuItems>
-
-              <UserButton.Action label="My Orders" labelIcon={<BagIcon/>} onClick={()=> router.push('/my-orders')}/>
-              
-            </UserButton.MenuItems>
-            
-             <UserButton.MenuItems>
-                  <UserButton.Action label="Home" labelIcon={<HomeIcon/>} onClick={()=> router.push('/')}/>
-              </UserButton.MenuItems>
-              <UserButton.MenuItems>
-                  <UserButton.Action label="Products" labelIcon={<BoxIcon/>} onClick={()=> router.push('/all-products')}/>
-              </UserButton.MenuItems>
-              
-           </UserButton>
-          ) : (
-            <SignInButton mode="modal">
-              <button className="flex items-center gap-2 hover:text-gray-900 transition">
-                <Image
-                  src={assets.user_icon}
-                  alt="user icon"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5"
-                />
-                Account
+            {/* Mobile Seller Dashboard */}
+            {isSeller && (
+              <button
+                onClick={() => {
+                  runThreeCleanup();
+                  router.push("/seller");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`block text-sm border px-4 py-2 rounded-full transition-all w-full text-center ${
+                  isActiveRoute("/seller")
+                    ? "border-orange-600 text-orange-600 bg-orange-600/10"
+                    : "border-sky-900 text-sky-900 hover:border-orange-600 hover:text-orange-600"
+                }`}
+              >
+                Seller Dashboard
               </button>
-            </SignInButton>
-          )}
+            )}
+
+            {/* Mobile User Section */}
+            {user ? (
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Action label="Cart" labelIcon={<CartIcon/>} onClick={()=> router.push('/cart')}/>                          
+                </UserButton.MenuItems>
+                <UserButton.MenuItems>
+                  <UserButton.Action label="My Orders" labelIcon={<BagIcon/>} onClick={()=> router.push('/my-orders')}/>                          
+                </UserButton.MenuItems>                         
+                <UserButton.MenuItems>
+                  <UserButton.Action label="Home" labelIcon={<HomeIcon/>} onClick={()=> router.push('/')}/>
+                </UserButton.MenuItems>
+                <UserButton.MenuItems>
+                  <UserButton.Action label="Products" labelIcon={<BoxIcon/>} onClick={()=> router.push('/all-products')}/>
+                </UserButton.MenuItems>                         
+              </UserButton>
+            ) : (
+              <SignInButton mode="modal">
+                <button className="flex items-center gap-2 hover:text-gray-900 transition">
+                  <Image
+                    src={assets.user_icon || "/placeholder.svg"}
+                    alt="user icon"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  Account
+                </button>
+              </SignInButton>
+            )}
 
             <a
               href="#contact"

@@ -94,9 +94,17 @@ const ProductList = () => {
           </table>
         </div>
       </div>}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
 
 export default ProductList;
+
+
+
+
+// mail id 
+// buisness address 
+// bank details 
+// identity proof  
