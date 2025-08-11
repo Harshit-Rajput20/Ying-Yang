@@ -1,7 +1,7 @@
 import connectDB from "../../../../../config/db";
-import Address from "../../../../../models/Address";
+// import Address from "../../../../../models/Address";
 import Order from "../../../../../models/Order";
-import Product from "../../../../../models/Product";
+// import Product from "../../../../../models/Product";
 import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

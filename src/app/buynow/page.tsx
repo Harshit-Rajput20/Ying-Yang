@@ -294,31 +294,51 @@
 //     </div>
 //   );
 // }
-"use client";
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import axios from "axios";
-import { ShoppingCart, Minus, Plus, ChevronRight, ArrowLeft, Trash2 } from 'lucide-react';
+"use client"
+
+import type React from "react"
+
+import { useEffect, useState } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import axios from "axios"
+import Image from "next/image" // Import Next.js Image component
+import { ShoppingCart, Minus, Plus, ChevronRight, ArrowLeft, Trash2 } from "lucide-react"
+
+// Define interfaces for better type safety
+interface Product {
+  _id: string
+  name: string
+  offerPrice: number
+  image: string[]
+}
+
+interface CartItem {
+  productId: string
+  name: string
+  price: number
+  quantity: number
+  image: string
+}
 
 export default function BuyNowPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const productId = searchParams.get("productId");
-  const nameFromQuery = searchParams.get("name");
-  const priceFromQuery = searchParams.get("price");
-  const imageFromQuery = searchParams.get("image");
-  
-  const [guestCart, setGuestCart] = useState([]);
-  const [product, setProduct] = useState<any>(
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const productId = searchParams.get("productId")
+  const nameFromQuery = searchParams.get("name")
+  const priceFromQuery = searchParams.get("price")
+  const imageFromQuery = searchParams.get("image")
+
+  const [guestCart, setGuestCart] = useState<CartItem[]>([])
+  const [product, setProduct] = useState<Product | null>(
     nameFromQuery && priceFromQuery && imageFromQuery
       ? {
-          _id: productId,
+          _id: productId || "", // Ensure _id is a string
           name: decodeURIComponent(nameFromQuery),
           offerPrice: Number(priceFromQuery),
           image: [decodeURIComponent(imageFromQuery)],
         }
-      : null
-  );
+      : null,
+  )
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -327,112 +347,111 @@ export default function BuyNowPage() {
     quantity: 1,
     notes: "",
     promoCode: "",
-  });
-  const [loading, setLoading] = useState(!product);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  })
+  const [loading, setLoading] = useState(!product && !!productId) // Only load if product is null and productId exists
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-    setGuestCart(storedCart);
-  }, []);
-  
+    const storedCart = JSON.parse(localStorage.getItem("guestCart") || "[]")
+    setGuestCart(storedCart)
+  }, [])
+
   useEffect(() => {
     if (!product && productId) {
-      setLoading(true);
+      setLoading(true)
       axios
         .get(`/api/products/${productId}`)
         .then((res) => setProduct(res.data))
-        .finally(() => setLoading(false));
+        .finally(() => setLoading(false))
     }
-  }, [productId, product]);
+  }, [productId, product])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
   const handleQuantityChange = (increment: boolean) => {
-    const newQuantity = increment ? formData.quantity + 1 : Math.max(1, formData.quantity - 1);
-    setFormData({ ...formData, quantity: newQuantity });
-  };
+    const newQuantity = increment ? formData.quantity + 1 : Math.max(1, formData.quantity - 1)
+    setFormData({ ...formData, quantity: newQuantity })
+  }
 
   const handleGuestCartQuantityChange = (index: number, increment: boolean) => {
-    const updatedCart = [...guestCart];
-    const newQuantity = increment 
-      ? updatedCart[index].quantity + 1 
-      : Math.max(1, updatedCart[index].quantity - 1);
-    
-    updatedCart[index].quantity = newQuantity;
-    setGuestCart(updatedCart);
-    localStorage.setItem("guestCart", JSON.stringify(updatedCart));
-  };
+    const updatedCart = [...guestCart]
+    const newQuantity = increment ? updatedCart[index].quantity + 1 : Math.max(1, updatedCart[index].quantity - 1)
+
+    updatedCart[index].quantity = newQuantity
+    setGuestCart(updatedCart)
+    localStorage.setItem("guestCart", JSON.stringify(updatedCart))
+  }
 
   const removeFromGuestCart = (index: number) => {
-    const updatedCart = guestCart.filter((_, i) => i !== index);
-    setGuestCart(updatedCart);
-    localStorage.setItem("guestCart", JSON.stringify(updatedCart));
-  };
+    const updatedCart = guestCart.filter((_, i) => i !== index)
+    setGuestCart(updatedCart)
+    localStorage.setItem("guestCart", JSON.stringify(updatedCart))
+  }
 
   const calculateTotals = () => {
-    let subtotal = 0;
-    
+    let subtotal = 0
+
     // Add single product if exists
     if (product) {
-      subtotal += formData.quantity * product.offerPrice;
+      subtotal += formData.quantity * product.offerPrice
     }
-    
+
     // Add guest cart products
-    guestCart.forEach(item => {
-      subtotal += item.quantity * item.price;
-    });
-    
-    const tax = Math.round(subtotal * 0.02); // 2% tax
-    const total = subtotal + tax;
-    
-    return { subtotal, tax, total };
-  };
+    guestCart.forEach((item) => {
+      subtotal += item.quantity * item.price
+    })
+
+    const tax = Math.round(subtotal * 0.02) // 2% tax
+    const total = subtotal + tax
+
+    return { subtotal, tax, total }
+  }
 
   const getTotalItems = () => {
-    let totalItems = product ? formData.quantity : 0;
-    totalItems += guestCart.reduce((sum, item) => sum + item.quantity, 0);
-    return totalItems;
-  };
+    let totalItems = product ? formData.quantity : 0
+    totalItems += guestCart.reduce((sum, item) => sum + item.quantity, 0)
+    return totalItems
+  }
 
   const handleOrderSubmit = async () => {
     // Validate required fields
     if (!formData.name || !formData.email || !formData.phoneNumber || !formData.shippingAddress) {
-      alert("Please fill in all required fields");
-      return;
+      alert("Please fill in all required fields")
+      return
     }
-
-    if (totalItems === 0) {
-      alert("No items in cart");
-      return;
+    const currentTotalItems = getTotalItems()
+    if (currentTotalItems === 0) {
+      alert("No items in cart")
+      return
     }
-
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     // Create products array combining both single product and guest cart
-    const products = [];
-    
+    const products = []
+
     // Add single product if exists
     if (product) {
       products.push({
         productId: product._id,
         name: product.name,
         quantity: formData.quantity,
-        price: product.offerPrice
-      });
+        price: product.offerPrice,
+      })
     }
-    
+
     // Add guest cart products (fix the productId issue)
-    guestCart.forEach(item => {
+    guestCart.forEach((item) => {
       products.push({
         productId: item.productId, // Use productId instead of _id
         name: item.name,
         quantity: item.quantity,
-        price: item.price
-      });
-    });
+        price: item.price,
+      })
+    })
+
+    const { total } = calculateTotals() // Recalculate total just before submission
 
     const orderDetails = {
       name: formData.name,
@@ -443,53 +462,51 @@ export default function BuyNowPage() {
       status: "Order Placed",
       notes: formData.notes || "",
       product: products, // Use the combined products array
-      date: new Date()
-    };
-
-    console.log("Order Details:", orderDetails);
+      date: new Date(),
+    }
+    console.log("Order Details:", orderDetails)
 
     try {
       const res = await fetch("/api/buynow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderDetails),
-      });
-      
+      })
+
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Order failed");
+        const errorData = await res.json()
+        throw new Error(errorData.message || "Order failed")
       }
-      
-      const data = await res.json();
-      console.log("Order successful:", data);
-      
+
+      const data = await res.json()
+      console.log("Order successful:", data)
+
       // Clear guest cart after successful order
-      localStorage.removeItem("guestCart");
-      
+      localStorage.removeItem("guestCart")
+
       // Show success message
-      alert("🎉 Order placed successfully! Thank you for your purchase.");
-      
+      alert("🎉 Order placed successfully! Thank you for your purchase.")
+
       // Redirect to home page or products page instead of order-confirmation
-      router.push("/");
-      
+      router.push("/")
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("❌ Failed to place order. Please try again.");
+      console.error("Error placing order:", error)
+      alert("❌ Failed to place order. Please try again.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-yellow-400 flex items-center justify-center">
         <div className="text-2xl font-semibold text-gray-800">Loading...</div>
       </div>
-    );
+    )
   }
 
-  const { subtotal, tax, total } = calculateTotals();
-  const totalItems = getTotalItems();
+  const { subtotal, tax, total } = calculateTotals()
+  const totalItems = getTotalItems()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-300 to-yellow-400 p-4 md:p-8">
@@ -510,7 +527,6 @@ export default function BuyNowPage() {
             </div>
           </div>
         </div>
-
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Product Details Section */}
           <div className="lg:col-span-2">
@@ -522,14 +538,15 @@ export default function BuyNowPage() {
                 <div className="col-span-3 font-semibold text-gray-700 text-center">Quantity</div>
                 <div className="col-span-2 font-semibold text-gray-700 text-center">Subtotal</div>
               </div>
-
               {/* Single Product Row (if exists) */}
               {product && (
                 <div className="grid grid-cols-12 gap-4 items-center mb-6 pb-6 border-b border-gray-100">
                   <div className="col-span-5 flex items-center gap-4">
-                    <img
+                    <Image
                       src={product.image[0] || "/placeholder.svg"}
                       alt={product.name}
+                      width={64} // Added width
+                      height={64} // Added height
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div>
@@ -558,24 +575,23 @@ export default function BuyNowPage() {
                   </div>
                 </div>
               )}
-
               {/* Guest Cart Products */}
               {guestCart.length > 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Cart Items ({guestCart.length})
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Cart Items ({guestCart.length})</h3>
                   {guestCart.map((item, index) => (
                     <div key={index} className="grid grid-cols-12 gap-4 items-center p-4 bg-yellow-50 rounded-lg">
                       <div className="col-span-5 flex items-center gap-4">
-                        <img
+                        <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
+                          width={64} // Added width
+                          height={64} // Added height
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                         <div>
                           <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                          <button 
+                          <button
                             onClick={() => removeFromGuestCart(index)}
                             className="text-red-500 text-sm hover:underline flex items-center gap-1"
                           >
@@ -607,7 +623,6 @@ export default function BuyNowPage() {
                   ))}
                 </div>
               )}
-
               {/* Empty State */}
               {!product && guestCart.length === 0 && (
                 <div className="text-center py-12">
@@ -616,12 +631,11 @@ export default function BuyNowPage() {
                   <p className="text-gray-500">Add some products to get started!</p>
                 </div>
               )}
-
               {/* Continue Shopping */}
               {(product || guestCart.length > 0) && (
                 <div className="mt-8 pt-6 border-t border-gray-200">
-                  <button 
-                    onClick={() => router.push('/all-products')}
+                  <button
+                    onClick={() => router.push("/all-products")}
                     className="flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -631,12 +645,10 @@ export default function BuyNowPage() {
               )}
             </div>
           </div>
-
           {/* Order Summary Section */}
           <div className="lg:col-span-1">
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg space-y-6">
               <h2 className="text-xl font-bold text-gray-800">Order Summary</h2>
-
               {/* Address Selection */}
               <div>
                 <h3 className="font-semibold text-gray-700 mb-3">SELECT ADDRESS</h3>
@@ -650,7 +662,6 @@ export default function BuyNowPage() {
                   </div>
                 </div>
               </div>
-
               {/* Customer Details Form */}
               <div className="space-y-3">
                 <input
@@ -690,7 +701,6 @@ export default function BuyNowPage() {
                   required
                 />
               </div>
-
               {/* Promo Code */}
               <div>
                 <h3 className="font-semibold text-gray-700 mb-3">PROMO CODE</h3>
@@ -708,7 +718,6 @@ export default function BuyNowPage() {
                   </button>
                 </div>
               </div>
-
               {/* Order Totals */}
               <div className="space-y-3 pt-4 border-t border-gray-200">
                 <div className="flex justify-between">
@@ -728,16 +737,21 @@ export default function BuyNowPage() {
                   <span>₹{total}</span>
                 </div>
               </div>
-
               {/* Place Order Button */}
               <button
                 onClick={handleOrderSubmit}
-                disabled={totalItems === 0 || !formData.name || !formData.email || !formData.phoneNumber || !formData.shippingAddress || isSubmitting}
+                disabled={
+                  totalItems === 0 ||
+                  !formData.name ||
+                  !formData.email ||
+                  !formData.phoneNumber ||
+                  !formData.shippingAddress ||
+                  isSubmitting
+                }
                 className="w-full bg-orange-500 text-white py-4 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-lg shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Processing Order..." : "Place Order"}
               </button>
-
               {/* Order Notes */}
               <textarea
                 name="notes"
@@ -752,5 +766,5 @@ export default function BuyNowPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

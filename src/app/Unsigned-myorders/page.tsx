@@ -1,161 +1,185 @@
-"use client";
-import { useState } from "react";
-import { Search, Package, Calendar, MapPin, Phone, Mail, User, FileText, Clock, CheckCircle, Truck, AlertCircle } from 'lucide-react';
+"use client" // This component is a Client Component
+
+import type React from "react"
+
+import { useState } from "react"
+import {
+  Search,
+  Package,
+  Calendar,
+  MapPin,
+  Phone,
+  Mail,
+  User,
+  FileText,
+  Clock,
+  CheckCircle,
+  Truck,
+  AlertCircle,
+} from "lucide-react"
+import Image from "next/image" // Import Next.js Image component
 
 // Interface for items within the 'Order' schema
 interface OrderItemFromOrderSchema {
-  product: string; // This will be the product ID
-  quantity: number;
+  product: string // This will be the product ID
+  quantity: number
 }
 
 // Interface for the 'Order' schema (logged-in user orders)
 interface UserOrder {
-  _id: string;
-  userId: string;
-  items: OrderItemFromOrderSchema[];
-  amount: number;
-  address: string; // Assuming this is an ID or string
-  status: string;
-  date: number; // Stored as a number (timestamp)
+  _id: string
+  userId: string
+  items: OrderItemFromOrderSchema[]
+  amount: number
+  address: string // Assuming this is an ID or string
+  status: string
+  date: number // Stored as a number (timestamp)
 }
 
 // Interface for items within the 'BuyNowOrder' schema
 interface OrderItemFromBuyNowSchema {
-  productId: string;
-  name: string;
-  quantity: number;
-  price: number;
+  productId: string
+  name: string
+  quantity: number
+  price: number
 }
 
 // Interface for the 'BuyNowOrder' schema (direct purchases)
 interface DirectOrder {
-  _id: string;
-  name: string; // Customer name
-  email: string;
-  phoneNumber: string;
-  shippingAddress: string;
-  product: OrderItemFromBuyNowSchema[]; // Note: 'product' is an array of objects here
-  totalAmount: number;
-  status: string;
-  date: string; // Stored as a string (Date object)
-  notes: string;
+  _id: string
+  name: string // Customer name
+  email: string
+  phoneNumber: string
+  shippingAddress: string
+  product: OrderItemFromBuyNowSchema[] // Note: 'product' is an array of objects here
+  totalAmount: number
+  status: string
+  date: string // Stored as a string (Date object)
+  notes: string
 }
 
 // Combined type for all orders
-type CombinedOrder = UserOrder | DirectOrder;
+type CombinedOrder = UserOrder | DirectOrder
+
+// Define a more specific type for cart items values
+interface CartItemValue {
+  name: string
+  quantity: number
+  price: number
+  // Add other properties if known, e.g., image: string;
+}
 
 interface UserData {
-  _id: string;
-  name: string;
-  email: string;
-  imageUrl: string;
-  cartItems: Record<string, any>;
+  _id: string
+  name: string
+  email: string
+  imageUrl: string
+  cartItems: Record<string, CartItemValue> // Resolved: Specified a more precise type
 }
 
 export default function OrdersPage() {
-  const [searchEmail, setSearchEmail] = useState("");
-  const [orders, setOrders] = useState<CombinedOrder[]>([]); // Now holds combined orders
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [error, setError] = useState("");
+  const [searchEmail, setSearchEmail] = useState("")
+  const [orders, setOrders] = useState<CombinedOrder[]>([]) // Now holds combined orders
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
+  const [error, setError] = useState("")
 
   const handleSearch = async () => {
     if (!searchEmail.trim()) {
-      setError("Please enter an email address");
-      return;
+      setError("Please enter an email address")
+      return
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(searchEmail)) {
-      setError("Please enter a valid email address");
-      return;
+      setError("Please enter a valid email address")
+      return
     }
 
-    setLoading(true);
-    setError("");
-    setSearched(true);
-    setOrders([]);
-    setUserData(null);
+    setLoading(true)
+    setError("")
+    setSearched(true)
+    setOrders([])
+    setUserData(null)
 
     try {
-      const response = await fetch(`/api/orders?email=${encodeURIComponent(searchEmail)}`);
-      const data = await response.json();
+      const response = await fetch(`/api/orders?email=${encodeURIComponent(searchEmail)}`)
+      const data = await response.json()
 
       if (data.success) {
-        setOrders(data.orders);
-        setUserData(data.user);
+        setOrders(data.orders)
+        setUserData(data.user)
         if (data.orders.length === 0 && !data.user) {
-          setError("No orders or user found for this email.");
+          setError("No orders or user found for this email.")
         }
       } else {
-        setError(data.message || "Failed to fetch data");
-        setOrders([]);
-        setUserData(null);
+        setError(data.message || "Failed to fetch data")
+        setOrders([])
+        setUserData(null)
       }
     } catch (error) {
-                console.log(error)
-        setError("Failed to fetch data. Please try again.");
-      setOrders([]);
-      setUserData(null);
+      console.error(error) // Changed console.log to console.error for errors
+      setError("Failed to fetch data. Please try again.")
+      setOrders([])
+      setUserData(null)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+    if (e.key === "Enter") {
+      handleSearch()
     }
-  };
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'order placed':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'processing':
-        return <Clock className="w-5 h-5 text-yellow-500" />;
-      case 'shipped':
-        return <Truck className="w-5 h-5 text-blue-500" />;
-      case 'delivered':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case "order placed":
+        return <CheckCircle className="w-5 h-5 text-green-500" />
+      case "processing":
+        return <Clock className="w-5 h-5 text-yellow-500" />
+      case "shipped":
+        return <Truck className="w-5 h-5 text-blue-500" />
+      case "delivered":
+        return <CheckCircle className="w-5 h-5 text-green-600" />
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-500" />;
+        return <AlertCircle className="w-5 h-5 text-gray-500" />
     }
-  };
+  }
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'order placed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'processing':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'shipped':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'delivered':
-        return 'bg-green-100 text-green-800 border-green-200';
+      case "order placed":
+        return "bg-green-100 text-green-800 border-green-200"
+      case "processing":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200"
+      case "shipped":
+        return "bg-blue-100 text-blue-800 border-blue-200"
+      case "delivered":
+        return "bg-green-100 text-green-800 border-green-200"
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200"
     }
-  };
+  }
 
   const formatDate = (dateInput: string | number) => {
-    let date;
-    if (typeof dateInput === 'number') {
+    let date
+    if (typeof dateInput === "number") {
       // If it's a number, assume it's a Unix timestamp (seconds or milliseconds)
       // Convert to milliseconds if it's in seconds
-      date = new Date(dateInput < 10000000000 ? dateInput * 1000 : dateInput);
+      date = new Date(dateInput < 10000000000 ? dateInput * 1000 : dateInput)
     } else {
-      date = new Date(dateInput);
+      date = new Date(dateInput)
     }
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-yellow-300 to-orange-400">
@@ -169,7 +193,6 @@ export default function OrdersPage() {
             </h1>
             <p className="text-gray-700 text-lg">Enter your email address to view your order history</p>
           </div>
-
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto">
             <div className="flex gap-4">
@@ -190,10 +213,9 @@ export default function OrdersPage() {
                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-8 rounded-2xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
               >
                 <Search className="w-5 h-5" />
-                {loading ? 'Searching...' : 'Search Orders'}
+                {loading ? "Searching..." : "Search Orders"}
               </button>
             </div>
-            
             {error && (
               <div className="mt-4 p-4 bg-red-100 border border-red-300 rounded-xl text-red-700 text-center">
                 {error}
@@ -201,7 +223,6 @@ export default function OrdersPage() {
             )}
           </div>
         </div>
-
         {/* Orders Display */}
         {searched && (
           <div className="space-y-6">
@@ -210,18 +231,17 @@ export default function OrdersPage() {
                 <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
                 <p className="text-gray-700 text-lg">Searching for your orders...</p>
               </div>
-            ) : (orders.length > 0 || userData) ? (
+            ) : orders.length > 0 || userData ? (
               <>
                 <div className="bg-yellow-200/40 backdrop-blur-md rounded-2xl p-6 border border-yellow-300/50">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Results for {searchEmail}
-                  </h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Results for {searchEmail}</h2>
                   <p className="text-gray-700">
-                    {orders.length > 0 ? `Found ${orders.length} order${orders.length !== 1 ? 's' : ''}.` : "No orders found for this email."}
+                    {orders.length > 0
+                      ? `Found ${orders.length} order${orders.length !== 1 ? "&apos;s" : ""}.` // Resolved: Unescaped entity
+                      : "No orders found for this email."}
                     {userData && " User profile found."}
                   </p>
                 </div>
-
                 {/* Display User Data if available */}
                 {userData && (
                   <div className="bg-yellow-200/40 backdrop-blur-md rounded-2xl shadow-lg border border-yellow-300/50 overflow-hidden p-6">
@@ -230,9 +250,11 @@ export default function OrdersPage() {
                       User Profile
                     </h3>
                     <div className="flex items-center gap-4 mb-4">
-                      <img
+                      <Image // Resolved: Using Next.js Image component
                         src={userData.imageUrl || "/placeholder.svg?height=80&width=80&query=user profile"}
                         alt={userData.name || "User Profile"}
+                        width={80} // Added width
+                        height={80} // Added height
                         className="w-20 h-20 rounded-full object-cover border-2 border-orange-400"
                       />
                       <div>
@@ -242,20 +264,20 @@ export default function OrdersPage() {
                     </div>
                   </div>
                 )}
-
                 {/* Display Orders if available */}
                 {orders.length > 0 ? (
                   orders.map((order) => (
-                    <div key={order._id} className="bg-yellow-200/40 backdrop-blur-md rounded-2xl shadow-lg border border-yellow-300/50 overflow-hidden">
+                    <div
+                      key={order._id}
+                      className="bg-yellow-200/40 backdrop-blur-md rounded-2xl shadow-lg border border-yellow-300/50 overflow-hidden"
+                    >
                       {/* Order Header */}
                       <div className="bg-yellow-200/30 backdrop-blur-sm p-6 border-b border-yellow-300/40">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div>
                             <h3 className="text-xl font-bold text-gray-900 mb-2">
-                              Order #{order._id.slice(-8).toUpperCase()}
-                              {' '}{' '}
-                              {/* Differentiate order types */}
-                              {'email' in order ? (
+                              Order #{order._id.slice(-8).toUpperCase()} {/* Differentiate order types */}
+                              {"email" in order ? (
                                 <span className="text-sm text-gray-600">(Direct Purchase)</span>
                               ) : (
                                 <span className="text-sm text-gray-600">(User Account Order)</span>
@@ -268,26 +290,27 @@ export default function OrdersPage() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <Package className="w-4 h-4" />
-                                {'product' in order ? order.product.length : order.items.length} item
-                                {('product' in order ? order.product.length : order.items.length) !== 1 ? 's' : ''}
+                                {"product" in order ? order.product.length : order.items.length} item
+                                {("product" in order ? order.product.length : order.items.length) !== 1 ? "s" : ""}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <div className={`px-4 py-2 rounded-full border flex items-center gap-2 ${getStatusColor(order.status)}`}>
+                            <div
+                              className={`px-4 py-2 rounded-full border flex items-center gap-2 ${getStatusColor(order.status)}`}
+                            >
                               {getStatusIcon(order.status)}
                               <span className="font-medium">{order.status}</span>
                             </div>
                             <div className="text-right">
                               <div className="text-2xl font-bold text-gray-900">
-                                ₹{'totalAmount' in order ? order.totalAmount : order.amount}
+                                ₹{"totalAmount" in order ? order.totalAmount : order.amount}
                               </div>
                               <div className="text-sm text-gray-600">Total Amount</div>
                             </div>
                           </div>
                         </div>
                       </div>
-
                       {/* Order Details */}
                       <div className="p-6">
                         <div className="grid md:grid-cols-2 gap-6">
@@ -297,21 +320,29 @@ export default function OrdersPage() {
                             <div className="space-y-3">
                               <div className="flex items-center gap-3">
                                 <User className="w-5 h-5 text-gray-500" />
-                                <span className="text-gray-700">{'name' in order ? order.name : userData?.name || 'N/A'}</span>
+                                <span className="text-gray-700">
+                                  {"name" in order ? order.name : userData?.name || "N/A"}
+                                </span>
                               </div>
                               <div className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-gray-500" />
-                                <span className="text-gray-700">{'email' in order ? order.email : userData?.email || 'N/A'}</span>
+                                <span className="text-gray-700">
+                                  {"email" in order ? order.email : userData?.email || "N/A"}
+                                </span>
                               </div>
                               <div className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-gray-500" />
-                                <span className="text-gray-700">{'phoneNumber' in order ? order.phoneNumber : 'N/A'}</span>
+                                <span className="text-gray-700">
+                                  {"phoneNumber" in order ? order.phoneNumber : "N/A"}
+                                </span>
                               </div>
                               <div className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
-                                <span className="text-gray-700">{'shippingAddress' in order ? order.shippingAddress : order.address || 'N/A'}</span>
+                                <span className="text-gray-700">
+                                  {"shippingAddress" in order ? order.shippingAddress : order.address || "N/A"}
+                                </span>
                               </div>
-                              {'notes' in order && order.notes && (
+                              {"notes" in order && order.notes && (
                                 <div className="flex items-start gap-3">
                                   <FileText className="w-5 h-5 text-gray-500 mt-0.5" />
                                   <span className="text-gray-700">{order.notes}</span>
@@ -319,58 +350,70 @@ export default function OrdersPage() {
                               )}
                             </div>
                           </div>
-
                           {/* Order Items */}
                           <div>
                             <h4 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h4>
                             <div className="space-y-3">
-                              {'product' in order ? ( // Check if it's a BuyNowOrder
-                                order.product.map((item, index) => (
-                                  <div key={index} className="bg-yellow-200/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-300/40">
-                                    <div className="flex justify-between items-start">
-                                      <div>
-                                        <h5 className="font-semibold text-gray-900">{item.name}</h5>
-                                        <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                              {"product" in order // Check if it's a BuyNowOrder
+                                ? order.product.map((item, index) => (
+                                    <div
+                                      key={index}
+                                      className="bg-yellow-200/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-300/40"
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div>
+                                          <h5 className="font-semibold text-gray-900">{item.name}</h5>
+                                          <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                        </div>
+                                        <div className="text-right">
+                                          <div className="font-semibold text-gray-900">₹{item.price}</div>
+                                          <div className="text-sm text-gray-600">per item</div>
+                                        </div>
                                       </div>
-                                      <div className="text-right">
-                                        <div className="font-semibold text-gray-900">₹{item.price}</div>
-                                        <div className="text-sm text-gray-600">per item</div>
-                                      </div>
-                                    </div>
-                                    <div className="mt-2 pt-2 border-t border-yellow-300/30">
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-sm text-gray-600">Subtotal:</span>
-                                        <span className="font-semibold text-gray-900">₹{item.quantity * item.price}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : ( // Otherwise, it's a UserOrder
-                                order.items.map((item, index) => (
-                                  <div key={index} className="bg-yellow-200/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-300/40">
-                                    <div className="flex justify-between items-start">
-                                      <div>
-                                        {/* If 'product' was populated, item.product would be an object */}
-                                        <h5 className="font-semibold text-gray-900">
-                                          {typeof item.product === 'object' && item.product !== null ? item.product.name : `Product ID: ${item.product}`}
-                                        </h5>
-                                        <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
-                                      </div>
-                                      <div className="text-right">
-                                        {/* You might need to fetch product price if not populated */}
-                                        <div className="font-semibold text-gray-900">₹{/* Add price if available */}</div>
-                                        <div className="text-sm text-gray-600">per item</div>
+                                      <div className="mt-2 pt-2 border-t border-yellow-300/30">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-sm text-gray-600">Subtotal:</span>
+                                          <span className="font-semibold text-gray-900">
+                                            ₹{item.quantity * item.price}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
-                                    <div className="mt-2 pt-2 border-t border-yellow-300/30">
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-sm text-gray-600">Subtotal:</span>
-                                        <span className="font-semibold text-gray-900">₹{/* Add subtotal if price available */}</span>
+                                  ))
+                                : // Otherwise, it's a UserOrder
+                                  order.items.map((item, index) => (
+                                    <div
+                                      key={index}
+                                      className="bg-yellow-200/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-300/40"
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div>
+                                          {/* If 'product' was populated, item.product would be an object */}
+                                          <h5 className="font-semibold text-gray-900">
+                                            {typeof item.product === "object" && item.product !== null
+                                              ? (item.product as any).name // Cast to any temporarily if product object structure is unknown
+                                              : `Product ID: ${item.product}`}
+                                          </h5>
+                                          <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                        </div>
+                                        <div className="text-right">
+                                          {/* You might need to fetch product price if not populated */}
+                                          <div className="font-semibold text-gray-900">
+                                            ₹{/* Add price if available */}
+                                          </div>
+                                          <div className="text-sm text-gray-600">per item</div>
+                                        </div>
+                                      </div>
+                                      <div className="mt-2 pt-2 border-t border-yellow-300/30">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-sm text-gray-600">Subtotal:</span>
+                                          <span className="font-semibold text-gray-900">
+                                            ₹{/* Add subtotal if price available */}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                ))
-                              )}
+                                  ))}
                             </div>
                           </div>
                         </div>
@@ -382,8 +425,8 @@ export default function OrdersPage() {
                     <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-2xl font-semibold text-gray-600 mb-2">No Orders Found</h3>
                     <p className="text-gray-500 mb-6">
-                    {"We couldn't find any orders associated with "}<strong>{searchEmail}</strong>.
-
+                      {"We couldn&apos;t find any orders associated with "}
+                      <strong>{searchEmail}</strong>.
                     </p>
                     <p className="text-sm text-gray-500">
                       If you believe this is an error, please double-check the email or contact support.
@@ -396,16 +439,13 @@ export default function OrdersPage() {
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold text-gray-600 mb-2">No Orders or User Found</h3>
                 <p className="text-gray-500 mb-6">
-                  We couldn't find any orders or user profile associated with <strong>{searchEmail}</strong>.
+                  We couldn&apos;t find any orders or user profile associated with <strong>{searchEmail}</strong>.
                 </p>
-                <p className="text-sm text-gray-500">
-                  Please ensure the email address is correct.
-                </p>
+                <p className="text-sm text-gray-500">Please ensure the email address is correct.</p>
               </div>
             )}
           </div>
         )}
-
         {/* Initial State */}
         {!searched && (
           <div className="bg-yellow-200/40 backdrop-blur-md rounded-2xl p-12 text-center border border-yellow-300/50">
@@ -435,5 +475,5 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
