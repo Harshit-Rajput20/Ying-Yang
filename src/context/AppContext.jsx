@@ -157,8 +157,8 @@ const { getToken } = useAuth()
   }
 
   useEffect(() => {
+    fetchProductData()
     if (user) {
-      fetchProductData()
       fetchUserData() // Call fetchUserData when the user object changes
     } else {
       // Reset states if user logs out or is not logged in

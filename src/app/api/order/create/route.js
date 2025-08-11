@@ -12,7 +12,7 @@ export async function POST(request){
     try {
         
         const { userId } = getAuth(request)
-        const { address , items } = await request.json();
+        const { address , items ,promoCode } = await request.json();
 
         if(!address || items.length === 0 ){
             return NextResponse.json({success:false , message: ' Invalid data'})
@@ -31,7 +31,8 @@ export async function POST(request){
                 address,
                 items,
                 amount: amount + Math.floor(amount * 0.02),
-                date: Date.now()
+                date: Date.now(),
+                promoCode 
             }
         })
 

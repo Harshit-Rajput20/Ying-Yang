@@ -44,6 +44,7 @@ import Header from '@/components/Header';
 import ViewCanvas from '@/components/ViewCanvas';
 import { ClerkProvider } from '@clerk/nextjs';
 import { AppContextProvider } from '@/context/AppContext'; // ✅ import your context
+import { Toaster } from "react-hot-toast";
 
 const alpino = localFont({
   src: '../../public/fonts/Alpino-Variable.woff2',
@@ -65,6 +66,7 @@ export default function RootLayout({
             <Header />
             <main>
               {children}
+               <Toaster position="top-center" reverseOrder={false} />
               <ViewCanvas />
             </main>
           </body>

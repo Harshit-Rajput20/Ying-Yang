@@ -5,22 +5,34 @@ import { useEffect, useState } from "react";
 // import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
+import toast from "react-hot-toast";
 
 import Image from "next/image";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
+import { useAuth } from "@clerk/nextjs";
 import React from "react";
 import { ShoppingCart, Heart, Share2, Zap, Award, Truck, Shield, Star, ChevronLeft, ChevronRight, MapPin, Clock, Package, CreditCard, RotateCcw, CheckCircle } from 'lucide-react';
 
+
+
+
+
+
+
+
 const Product = () => {
-    const { id } = useParams();
+         const { id } = useParams();
     const { products, router, addToCart } = useAppContext()
     const [mainImage, setMainImage] = useState(null);
     const [productData, setProductData] = useState(null);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
     const [isBuying, setIsBuying] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [quantity, setQuantity] = useState(1);
+    // const [quantity, setQuantity] = useState(1);
+
+      const { isSignedIn } = useAuth();
+    const quantity = 1;
 
     const fetchProductData = () => {
         if (!products || products.length === 0) return;
@@ -54,22 +66,78 @@ const Product = () => {
         }
     }, [productData]);
 
-    const handleAddToCart = async () => {
-        setIsAddingToCart(true);
-        for (let i = 0; i < quantity; i++) {
-            await addToCart(productData._id);
-        }
-        setTimeout(() => setIsAddingToCart(false), 800);
-    };
 
-    const handleBuyNow = async () => {
-        setIsBuying(true);
-        for (let i = 0; i < quantity; i++) {
-            await addToCart(productData._id);
-        }
-        router.push('/cart');
-    };
 
+
+const handleAddToCart = async () => {
+  if (isSignedIn) {
+    // ✅ Signed in → Add to server cart
+    setIsAddingToCart(true);
+    for (let i = 0; i < quantity; i++) {
+      await addToCart(productData._id);
+    }
+    setTimeout(() => {
+      setIsAddingToCart(false);
+       toast.success("Product added to cart successfully!");
+      router.push("/cart");
+    }, 500);
+  } else {
+    // ❌ Not signed in → Save to guest cart in localStorage
+    const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+
+    // Push the product with quantity
+    guestCart.push({
+      productId: productData._id,
+      name: productData.name,
+      price: productData.offerPrice,
+      image: productData.image[0],
+      quantity
+    });
+
+    console.log(guestCart)
+
+    localStorage.setItem("guestCart", JSON.stringify(guestCart));
+     toast.success("Product added to cart successfully!");
+
+    // Redirect to buynow without query params
+    router.push("/all-products")
+ 
+
+  }
+};
+
+
+//     const handleBuyNow = () => {
+//   router.push(
+//     `/buynow?productId=${productData._id}&name=${encodeURIComponent(
+//       productData.name
+//     )}&price=${productData.offerPrice}&image=${encodeURIComponent(
+//       productData.image[0]
+//     )}`
+//   );
+// };
+
+
+
+const handleBuyNow = async () => {
+    if (isSignedIn) {
+      // Logged-in user → Add to cart then redirect
+      setIsBuying(true);
+      for (let i = 0; i < quantity; i++) {
+        await addToCart(productData._id);
+      }
+      router.push("/cart");
+    } else {
+      // Not logged in → Redirect to buynow page with query params
+      router.push(
+    `/buynow?productId=${productData._id}&name=${encodeURIComponent(
+      productData.name
+    )}&price=${productData.offerPrice}&image=${encodeURIComponent(
+      productData.image[0]
+    )}`
+  );
+    }
+  };
     const handleThumbnailClick = (image, index) => {
         setMainImage(image);
         setCurrentImageIndex(index);

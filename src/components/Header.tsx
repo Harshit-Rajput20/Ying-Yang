@@ -15,6 +15,8 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link"
 import CartButton from "./CartButton"
 import { runThreeCleanup } from "@/lib/threeCleanup" // ✅ Import this
+import { useAuth } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 // type Props = {}
 
@@ -24,7 +26,8 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { isSeller } = useAppContext()   
   const { user } = useUser() // ✅ Get user info
-
+   const { isSignedIn } = useAuth();
+ 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
@@ -56,25 +59,36 @@ export default function Header() {
         <div className="py-4">
           <div className="flex items-center justify-center gap-4 lg:gap-12 max-md:hidden">
             {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => {
-                  runThreeCleanup();
-                  router.push(item.route);
-                }}
-                className={`font-semibold transition hover:text-[#d32f2f] no-underline relative ${
-                  isActiveRoute(item.route) 
-                    ? "text-[#d32f2f]" 
-                    : "text-[#002B56]"
-                }`}
-              >
-                {item.name}
-                {/* ✅ Active indicator */}
-                {isActiveRoute(item.route) && (
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#d32f2f] rounded-full"></div>
-                )}
-              </button>
-            ))}
+  <button
+    key={item.name}
+    onClick={() => {
+      runThreeCleanup();
+
+      // ✅ Special logic for "My orders"
+      if (item.route === "/my-orders") {
+        if (user) {
+          router.push("/my-orders");
+        } else {
+          router.push("/Unsigned-myorders");
+        }
+      } else {
+        router.push(item.route);
+      }
+    }}
+    className={`font-semibold transition hover:text-[#d32f2f] no-underline relative ${
+      isActiveRoute(item.route)
+        ? "text-[#d32f2f]"
+        : "text-[#002B56]"
+    }`}
+  >
+    {item.name}
+    {/* ✅ Active indicator */}
+    {isActiveRoute(item.route) && (
+      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#d32f2f] rounded-full"></div>
+    )}
+  </button>
+))}
+
             
             {/* Seller Dashboard */}
             {isSeller && (
@@ -101,7 +115,17 @@ export default function Header() {
           <button
             onClick={() => {
               runThreeCleanup(); // ✅ cleanup Three.js and GSAP
-              router.push("/cart"); // ✅ navigate safely
+               if (isSignedIn) {
+      // ✅ Signed in → go to cart
+      router.push("/cart");
+    } else {
+      // ❌ Not signed in → go to buynow page
+      const productDataid = "6892688546e14b1cdadcd220"
+      router.push(
+        `/buynow?productId=${productDataid} 
+        )}`
+      );
+    } // ✅ navigate safely
             }}
             className={`hover:text-orange-600 transition-colors duration-200 relative group ${
               isActiveRoute("/cart") ? "text-orange-600" : "text-sky-900"
