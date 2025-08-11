@@ -37,8 +37,7 @@ import { SliceZone } from "@prismicio/react";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
-import type { Content } from "@prismicio/client";
-
+ 
 import SkyDive from "@/slices/SkyDive";
 import Carousel from "@/slices/Carousel";
 import AlternatingText from "@/slices/AlternatingText";

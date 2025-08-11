@@ -12,11 +12,10 @@ import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from "@/assets/assets"
 import Image from "next/image"
 // ✅ Correct (for App Router)
 import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link"
-import CartButton from "./CartButton"
+ 
 import { runThreeCleanup } from "@/lib/threeCleanup" // ✅ Import this
 import { useAuth } from "@clerk/nextjs";
-import toast from "react-hot-toast";
+ 
 
 // type Props = {}
 

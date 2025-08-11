@@ -1,6 +1,6 @@
 import authSeller from "../../../../lib/authSeller";
 import connectDB from "../../../../../config/db";
-import Address from "../../../../../models/Address";
+// import Address from "../../../../../models/Address";
 import Order from "../../../../../models/Order";
 // import Product from "../../../../../models/Product";
 import { getAuth } from "@clerk/nextjs/server";
@@ -20,7 +20,7 @@ export async function GET(request) {
 
         await connectDB()
 
-        Address.length
+        // Address.length
 
         const orders = await Order.find({}).populate('address items.product')
 

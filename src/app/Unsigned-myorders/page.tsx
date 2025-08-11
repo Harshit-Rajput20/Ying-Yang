@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Search, Package, Calendar, MapPin, Phone, Mail, User, FileText, Clock, CheckCircle, Truck, AlertCircle, ImageIcon } from 'lucide-react';
+import { Search, Package, Calendar, MapPin, Phone, Mail, User, FileText, Clock, CheckCircle, Truck, AlertCircle } from 'lucide-react';
 
 // Interface for items within the 'Order' schema
 interface OrderItemFromOrderSchema {
@@ -93,8 +93,9 @@ export default function OrdersPage() {
         setOrders([]);
         setUserData(null);
       }
-    } catch (err) {
-      setError("Failed to fetch data. Please try again.");
+    } catch (error) {
+                console.log(error)
+        setError("Failed to fetch data. Please try again.");
       setOrders([]);
       setUserData(null);
     } finally {
@@ -381,7 +382,8 @@ export default function OrdersPage() {
                     <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-2xl font-semibold text-gray-600 mb-2">No Orders Found</h3>
                     <p className="text-gray-500 mb-6">
-                      We couldn't find any orders associated with <strong>{searchEmail}</strong>.
+                    {"We couldn't find any orders associated with "}<strong>{searchEmail}</strong>.
+
                     </p>
                     <p className="text-sm text-gray-500">
                       If you believe this is an error, please double-check the email or contact support.

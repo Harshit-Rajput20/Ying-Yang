@@ -1,7 +1,6 @@
 'use client'
 
-import Image from 'next/image';
-import { CheckCircle, Zap, Heart, Shield, Clock, Droplets, Sparkles, Beaker, Users, Award, TrendingUp, Star } from 'lucide-react';
+ import { CheckCircle, Zap, Heart, Shield, Clock, Droplets, Sparkles} from 'lucide-react';
 import Footer from '@/components/Footer';
 
 const About = () => {

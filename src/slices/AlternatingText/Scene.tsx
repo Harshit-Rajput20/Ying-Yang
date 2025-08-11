@@ -2,7 +2,7 @@
 
 import { Environment } from "@react-three/drei";
 import { useRef } from "react";
-import { Group, MathUtils } from "three";
+import { Group} from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -12,9 +12,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-type Props = {};
-
-export default function Scene({}: Props) {
+ 
+export default function Scene({}) {
   const canRef = useRef<Group>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)", true);
 

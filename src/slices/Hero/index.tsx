@@ -177,7 +177,7 @@
 import { type FC, useRef, useEffect } from "react"
 import { asText, type Content } from "@prismicio/client"
 import { PrismicRichText, type SliceComponentProps } from "@prismicio/react"
-import { PrismicNextImage } from "@prismicio/next"
+ 
 // import { Bounded } from "@/components/Bounded" // No longer needed
 import Button from "@/components/Button"
 import { TextSplitter } from "@/components/TextSplitter"

@@ -95,6 +95,7 @@ export default function OrdersPage() {
           setOrders([])
         }
       } catch (err) {
+        console.log(err)
         setError("Failed to fetch data. Please try again.")
         setOrders([])
       } finally {
@@ -173,7 +174,9 @@ export default function OrdersPage() {
       alert(data.message || "Failed to delete order");
     }
   } catch (error) {
+
     alert("Error deleting order");
+    console.log(error)
   }
 };
 
