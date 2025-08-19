@@ -174,10 +174,10 @@
 
 
 "use client"
-import { type FC, useRef, useEffect } from "react"
+import { type FC, useRef, useEffect ,useState} from "react"
 import { asText, type Content } from "@prismicio/client"
 import { PrismicRichText, type SliceComponentProps } from "@prismicio/react"
- 
+ import { PrelaunchPopup } from "@/components/PrelaunchPopup"
 // import { Bounded } from "@/components/Bounded" // No longer needed
 import Button from "@/components/Button"
 import { TextSplitter } from "@/components/TextSplitter"
@@ -190,7 +190,10 @@ import { Bubbles } from "./Bubbles"
 // import { FloatingFruits } from "./FloatingFruits"
 import { useStore } from "@/hooks/useStore"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import { FaPlay, FaPause } from "react-icons/fa"
 import clsx from "clsx" // Import clsx for combining classes
+import PreOrderButton from "@/components/PreOrderButton"
+import Image from "next/image"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -206,6 +209,32 @@ const Hero: FC<HeroProps> = ({ slice }) => {
   const heroRef = useRef(null)
   const ready = useStore((state) => state.ready)
   const isDesktop = useMediaQuery("(min-width : 768px)", true)
+const audioRef = useRef<HTMLAudioElement | null>(null)
+const [isPlaying, setIsPlaying] = useState(false)
+  const toggleAudio = () => {
+    
+  if (!audioRef.current) return
+
+  if (isPlaying) {
+    audioRef.current.pause()
+    setIsPlaying(false)
+  } else {
+    audioRef.current.play()
+    setIsPlaying(true)
+  }
+}
+
+  
+  const [showPopup, setShowPopup] = useState(false)
+
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(true)
+    }, 2000) // Show popup after 2 seconds
+
+    return () => clearTimeout(timer)
+  }, [])
+
 
   useGSAP(
     () => {
@@ -319,6 +348,7 @@ const Hero: FC<HeroProps> = ({ slice }) => {
                 buttonText={slice.primary.button_text}
                 className="hero-button mt-12"
               />
+              <PreOrderButton/>
             </div>
           </div>
           <div className="grid text-side relative z-[80] h-screen items-center gap-4 md:grid-cols-2">
@@ -334,6 +364,29 @@ const Hero: FC<HeroProps> = ({ slice }) => {
           </div>
         </div>
       </div>
+
+       <PrelaunchPopup isVisible={showPopup} onClose={() => setShowPopup(false)} />
+        {/* Audio element */}
+<audio ref={audioRef} src="/classic-afro-dancehall-drum-loop-102bpm-242737.mp3" loop />
+
+{/* Floating circular button */}
+<div>
+  {/* DVD Image Button */}
+  {/* <button
+    onClick={toggleAudio}
+    className="fixed bottom-6 left-8 z-[1000] h-40 w-40 rounded-full overflow-hidden  "
+  >
+    <Image
+      src="/dvd.png"
+      alt="DVD"
+      fill                // ✅ makes it fill the parent
+      className={`object-cover transition-transform ${
+        isPlaying ? "animate-spin-slow" : ""
+      }`}
+    />
+  </button> */}
+</div>
+
     </section>
   )
 }

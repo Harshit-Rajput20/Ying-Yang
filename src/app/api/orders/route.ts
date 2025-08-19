@@ -11,6 +11,7 @@ const LoadDB = async () => {
 };
 
 export async function GET(request: NextRequest) {
+    
   try {
     await LoadDB();
     

@@ -9,11 +9,16 @@ import Footer from "@/components/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import { Package, MapPin, Calendar, CreditCard, Clock, CheckCircle, Truck, User, Phone } from 'lucide-react';
+import { useAuth } from "@clerk/nextjs";
+import toast from "react-hot-toast";
+
+
 
 const MyOrders = () => {
-    const { currency, getToken, user } = useAppContext();
+   const { currency, getToken, user, addToCart, router } = useAppContext();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { isSignedIn } = useAuth();
 
     const fetchOrders = async () => {
         try {
@@ -35,6 +40,26 @@ const MyOrders = () => {
             fetchOrders();
         }
     }, [user]);
+
+     const handleReorder = async (order) => {
+        const quantity = 1;
+        const firstItem = order.items[0]?.product;
+
+        if (!firstItem) return;
+
+        if (isSignedIn) {
+            // Logged-in → Add first product to cart
+            for (let i = 0; i < quantity; i++) {
+                await addToCart(firstItem._id);
+            }
+            router.push("/cart");
+        } else {
+            // Guest → Redirect to buynow page with params
+            router.push(
+                `/buynow?productId=${firstItem._id}&name=${encodeURIComponent(firstItem.name)}&price=${firstItem.offerPrice || firstItem.price}&image=${encodeURIComponent(firstItem.image[0])}`
+            );
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-yellow-300 to-orange-400">
@@ -178,7 +203,10 @@ const MyOrders = () => {
                                     <button className="px-6 py-2 bg-yellow-200/50 hover:bg-yellow-200/60 text-gray-800 rounded-xl text-sm font-semibold transition-all duration-200 border border-yellow-300/40">
                                         Track Order
                                     </button>
-                                    <button className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-all duration-200">
+                                     <button
+                                        onClick={() => handleReorder(order)}
+                                        className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold"
+                                    >
                                         Reorder
                                     </button>
                                 </div>

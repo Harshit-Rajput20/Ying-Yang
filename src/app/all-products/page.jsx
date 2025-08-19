@@ -24,8 +24,8 @@ const AllProducts = () => {
                 
                 {/* Page Header with Glass Morphism */}
                 <div className="w-full pt-12 mb-12">
-                    <div className="bg-white/20 backdrop-blur-md rounded-3xl p-8 border border-white/30 shadow-2xl">
-                        <div className="flex flex-col items-center text-center">
+                    {/* <div className="bg-white/20 backdrop-blur-md rounded-3xl p-8 border border-white/30 shadow-2xl"> */}
+                        {/* <div className="flex flex-col items-center text-center">
                             <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
                                 All Products
                             </h1>
@@ -34,14 +34,14 @@ const AllProducts = () => {
                             </p>
                             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
                             
-                            {/* Product Count Badge */}
+                             
                             <div className="mt-6 bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full border border-white/40">
                                 <span className="text-gray-800 font-bold">
                                     {products.length} Products Available
                                 </span>
-                            </div>
-                        </div>
-                    </div>
+                            </div> */}
+                        {/* </div> */}
+                    {/* </div> */}
                 </div>
 
                 {/* Products Grid */}

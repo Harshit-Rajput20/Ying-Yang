@@ -156,6 +156,8 @@ const { getToken } = useAuth()
     )
   }
 
+  console.log("cartamountissssssss" + getCartAmount())
+
   useEffect(() => {
     fetchProductData()
     if (user) {

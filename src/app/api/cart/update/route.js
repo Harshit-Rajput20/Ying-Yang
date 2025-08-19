@@ -11,6 +11,7 @@ export async function POST(request) {
         
         const { userId } = getAuth(request)
         const { cartData } = await request.json()
+        console.log("cartdataaaa"+cartData)
 
         await connectDB()
         const user = await User.findById(userId)

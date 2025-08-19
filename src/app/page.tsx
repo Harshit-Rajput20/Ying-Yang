@@ -43,6 +43,7 @@ import Carousel from "@/slices/Carousel";
 import AlternatingText from "@/slices/AlternatingText";
 import BigText from "@/slices/BigText";
 import Footer from "@/components/Footer";
+import VedioInfo from "@/slices/VedioInfo";
  
 // Mocked slice data
 
@@ -63,6 +64,7 @@ export default async function Home() {
       {/* Manually rendered custom slices */}
       <SkyDive sentence="Art of Ying Yang!" flavor="strawberryLemonade" />
       <Carousel slice={undefined} index={0} slices={[]} context={undefined} />
+      <VedioInfo/>
  <AlternatingText
          
       />  

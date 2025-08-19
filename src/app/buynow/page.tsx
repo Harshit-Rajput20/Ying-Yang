@@ -409,7 +409,11 @@ export default function BuyNowPage() {
     return { subtotal, tax, total }
   }
 
-  const getTotalItems = () => {
+
+
+  
+
+  const getTotalItems = () => { 
     let totalItems = product ? formData.quantity : 0
     totalItems += guestCart.reduce((sum, item) => sum + item.quantity, 0)
     return totalItems
@@ -452,6 +456,7 @@ export default function BuyNowPage() {
     })
 
     const { total } = calculateTotals() // Recalculate total just before submission
+    console.log("totallll"+total)
 
     const orderDetails = {
       name: formData.name,

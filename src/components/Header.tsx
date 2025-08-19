@@ -113,7 +113,7 @@ export default function Header() {
           {/* Shopping Bag */}
           <button
             onClick={() => {
-              runThreeCleanup(); // ✅ cleanup Three.js and GSAP
+              runThreeCleanup();  // ✅ cleanup Three.js and GSAP
                if (isSignedIn) {
       // ✅ Signed in → go to cart
       router.push("/cart");

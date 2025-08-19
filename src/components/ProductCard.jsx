@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
   return (
     <li
       onClick={() => router.push(`/product/${product._id}`)}
-      className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-4 hover:bg-white/30 hover:shadow-xl cursor-pointer transition-all duration-300 transform hover:scale-105"
+      className="bg-white/20 backdrop-blur-md border border-white/30 list-none rounded-2xl p-4 hover:bg-white/30 hover:shadow-xl cursor-pointer transition-all duration-300 transform hover:scale-105"
     >
       {/* Product Image Container */}
       <div className="group relative bg-white/30 backdrop-blur-sm rounded-xl w-full h-52 flex items-center justify-center border border-white/20 overflow-hidden">
