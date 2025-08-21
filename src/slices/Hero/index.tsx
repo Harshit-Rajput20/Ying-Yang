@@ -353,6 +353,15 @@ const [isPlaying, setIsPlaying] = useState(false)
           </div>
           <div className="grid text-side relative z-[80] h-screen items-center gap-4 md:grid-cols-2">
             {/* <PrismicNextImage className="w-full md:hidden" field={slice.primary.cans_image} /> */}
+            
+                <Image 
+                  src="/Screenshot 2025-08-19 163406.png" 
+                  alt="My custom can" 
+                  width={500} 
+                  height={500} 
+                  className="w-full md:hidden" 
+                />
+
             <div>
               <h2 className="text-side-heading text-balance text-6xl font-black uppercase text-sky-950">
                 <TextSplitter text={asText(slice.primary.second_heading)} />

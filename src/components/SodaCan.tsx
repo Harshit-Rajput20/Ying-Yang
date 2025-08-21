@@ -3,22 +3,22 @@ import { useMemo } from "react";
 import * as THREE from "three";
 
 const flavorTextures = {
-  lemonLime: "/labels/2.png",
-  grape: "/labels/des2.png",
+  lemonLime: "/labels/test8.png",
+  grape: "/labels/lemon2.png",
   blackCherry: "/labels/design.png",
-  strawberryLemonade: "/labels/1.png",
-  watermelon: "/labels/yellow (3).png",
+  strawberryLemonade: "/labels/coconut.png",
+  watermelon: "/labels/lemon2.png",
   test: "/labels/des2.png",
   test2:"/labels/Group 22.png"
 };
 
 
 const capTextures = {
- lemonLime: "/labels/2.png",
-  grape: "/labels/des2.png",
+ lemonLime: "/labels/test8.png",
+  grape: "/labels/lemon2.png",
   blackCherry: "/labels/design.png",
-  strawberryLemonade: "/labels/1.png",
-  watermelon: "/labels/yellow (3).png",
+  strawberryLemonade: "/labels/coconut.png",
+  watermelon: "/labels/lemon2.png",
   test: "/labels/des2.png",
   test2:"/labels/Group 22.png"
 };

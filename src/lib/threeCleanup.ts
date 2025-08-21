@@ -1,4 +1,3 @@
-// src/lib/threeCleanup.ts
 let cleanupCallback: (() => void) | null = null;
 
 export const registerThreeCleanup = (callback: () => void) => {
@@ -7,7 +6,11 @@ export const registerThreeCleanup = (callback: () => void) => {
 
 export const runThreeCleanup = () => {
   if (cleanupCallback) {
-    cleanupCallback();
+    try {
+      cleanupCallback();
+    } catch (err) {
+      console.warn("Cleanup error:", err);
+    }
     cleanupCallback = null;
   }
 };
