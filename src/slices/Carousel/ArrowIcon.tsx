@@ -6,6 +6,7 @@ export function ArrowIcon(props: SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 52 52"
+      
       {...props}
     >
       <path

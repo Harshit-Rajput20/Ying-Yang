@@ -195,48 +195,85 @@ import type { SodaCanProps } from "@/components/SodaCan"
 import { runThreeCleanup } from "@/lib/threeCleanup"
 import { useRouter } from "next/navigation"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import Image from "next/image"
 
 gsap.registerPlugin(useGSAP)
 
 const SPINS_ON_CHANGE = 8
-
 const FLAVORS: {
   flavor: SodaCanProps["flavor"]
   color: string
   name: string
   id: string
+  images: string[]
 }[] = [
   {
     flavor: "blackCherry",
     color: "#710523",
     name: "Black Cherry",
     id: "689267c846e14b1cdadcd21e",
+    images: [
+      "/fruits/strawberry/st1.png",
+      "/fruits/strawberry/st2.png",
+      "/fruits/strawberry/st3.png",
+      "/fruits/strawberry/st4.png",
+       
+    ],
   },
   {
     flavor: "grape",
     color: "#572981",
     name: "Grape Goodness",
     id: "6892688546e14b1cdadcd220",
+    images: [
+      "/fruits/strawberry/st1.png",
+      "/fruits/strawberry/st2.png",
+      "/fruits/strawberry/st3.png",
+      "/fruits/strawberry/st4.png",
+       
+    ],
   },
-  {
-    flavor: "lemonLime",
-    color: "#164405",
-    name: "Lemon Lime",
-    id: "689266aa46e14b1cdadcd216",
-  },
+  // {
+  //   flavor: "lemonLime",
+  //   color: "#164405",
+  //   name: "Lemon Lime",
+  //   id: "689266aa46e14b1cdadcd216",
+  //    images: [
+  //     "/fruits/strawberry/st1.png",
+  //     "/fruits/strawberry/st2.png",
+  //     "/fruits/strawberry/st3.png",
+  //     "/fruits/strawberry/st4.png",
+       
+  //   ],
+  // },
   {
     flavor: "strawberryLemonade",
     color: "#690B3D",
     name: "Strawberry Lemonade",
     id: "689263f446e14b1cdadcd20e",
+     images: [
+      "/fruits/strawberry/st1.png",
+      "/fruits/strawberry/st2.png",
+      "/fruits/strawberry/st3.png",
+      "/fruits/strawberry/st4.png",
+       
+    ],
   },
   {
     flavor: "watermelon",
     color: "#4B7002",
     name: "Watermelon Crush",
     id: "6892690e46e14b1cdadcd222",
+     images: [
+      "/fruits/strawberry/st1.png",
+      "/fruits/strawberry/st2.png",
+      "/fruits/strawberry/st3.png",
+      "/fruits/strawberry/st4.png",
+       
+    ],
   },
 ]
+
 
 export type CarouselProps = Partial<SliceComponentProps<Content.CarouselSlice>>
 
@@ -245,6 +282,9 @@ const Carousel: FC<CarouselProps> = () => {
   const sodaCanRef = useRef<Group>(null)
   const router = useRouter()
   const isDesktop = useMediaQuery("(min-width : 768px)", true)
+
+
+  
 
   function changeFlavor(index: number) {
     if (!sodaCanRef.current) return
@@ -305,24 +345,38 @@ const Carousel: FC<CarouselProps> = () => {
 />
 
 
-      <h2 className="relative text-center text-5xl font-bold">Explore Our Flavor Carousel!</h2>
+      <h2 className="relative text-center text-5xl font-bold">Our Flavors</h2>
 
       {isDesktop && (
         <div className="grid grid-cols-[auto,auto,auto] items-center">
-          <ArrowButton onClick={() => changeFlavor(currentFlavorIndex - 1)} direction="left" label="Previous Flavor" />
+            
+          <ArrowButton onClick={() => changeFlavor(currentFlavorIndex - 1)} direction="left" label="Previous Flavor"/>
+                    <View className="relative z-10 w-[70vmin] h-[70vmin] aspect-square min-w-80 min-h-80">
+                      <Center position={[0, 0, 0]}>
+                        <FloatingCan ref={sodaCanRef} floatIntensity={0.3} rotationIntensity={1} flavor={FLAVORS[currentFlavorIndex].flavor} />
+                      </Center>
+                      <Environment
+                        files="/hdr/lobby.hdr"
+                        environmentIntensity={0.6}
+                        environmentRotation={[0, 3, 0]}
+                      />
+                      <directionalLight intensity={6} position={[0, 1, 1]} />
+                    </View>
 
-          <View className="aspect-square h-[70vmin] min-h-40">
-            <Center position={[0, 0, 0]}>
-              <FloatingCan
-                ref={sodaCanRef}
-                floatIntensity={0.3}
-                rotationIntensity={1}
-                flavor={FLAVORS[currentFlavorIndex].flavor}
-              />
-            </Center>
-            <Environment files="/hdr/lobby.hdr" environmentIntensity={0.6} environmentRotation={[0, 3, 0]} />
-            <directionalLight intensity={6} position={[0, 1, 1]} />
-          </View>
+                    {/* 👇 Fruit image outside R3F */}
+                     
+                      {/* <div className="absolute inset-0 flex items-center justify-center">
+                      <Image
+                        src={FLAVORS[currentFlavorIndex].images[3]}
+                        alt={FLAVORS[currentFlavorIndex].name}
+                        width={2100}  // ✅ Bigger size
+                        height={2100}
+                        className="w-1072 h-1072 object-contain"
+                      />
+                      
+                    </div> */}
+
+
 
           <ArrowButton onClick={() => changeFlavor(currentFlavorIndex + 1)} direction="right" label="Next Flavor" />
         </div>
@@ -404,14 +458,21 @@ const Carousel: FC<CarouselProps> = () => {
         </div>
         <div className="mt-2 text-2xl font-normal opacity-90">Price 300/bottle</div>
         <button
-          onClick={() => {
-            runThreeCleanup()
-            router.push(`/product/${FLAVORS[currentFlavorIndex].id}`)
-          }}
-          className="mt-4 px-6 py-2 bg-white text-black rounded-full font-medium shadow-md hover:bg-gray-100 transition"
-        >
-          Buy Now
-        </button>
+  onClick={() => {
+    if (isDesktop) {
+      // ✅ Desktop → normal navigation
+      runThreeCleanup()
+      router.push(`/product/${FLAVORS[currentFlavorIndex].id}`)
+    } else {
+      // ✅ Mobile → navigate + refresh
+      window.location.href = `/product/${FLAVORS[currentFlavorIndex].id}`
+    }
+  }}
+  className="mt-4 px-6 py-2 bg-white text-black rounded-full font-medium shadow-md hover:bg-gray-100 transition"
+>
+  Buy Now
+</button>
+
       </div>
     </section>
   )

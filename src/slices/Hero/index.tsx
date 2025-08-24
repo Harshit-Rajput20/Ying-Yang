@@ -325,6 +325,8 @@ const [isPlaying, setIsPlaying] = useState(false)
         </View>
       )}
 
+      
+
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center">
         {" "}
         {/* Applied Bounded's inner classes */}
@@ -361,7 +363,7 @@ const [isPlaying, setIsPlaying] = useState(false)
                   height={500} 
                   className="w-full md:hidden" 
                 />
-
+                   
             <div>
               <h2 className="text-side-heading text-balance text-6xl font-black uppercase text-sky-950">
                 <TextSplitter text={asText(slice.primary.second_heading)} />

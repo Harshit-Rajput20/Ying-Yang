@@ -4,9 +4,9 @@ import * as THREE from "three";
 
 const flavorTextures = {
   lemonLime: "/labels/test8.png",
-  grape: "/labels/lemon2.png",
-  blackCherry: "/labels/design.png",
-  strawberryLemonade: "/labels/coconut.png",
+  grape: "/labels/coconut.jpg",
+  blackCherry: "/labels/rose.jpg",
+  strawberryLemonade: "/labels/watermelon.jpg",
   watermelon: "/labels/lemon2.png",
   test: "/labels/des2.png",
   test2:"/labels/Group 22.png"
@@ -15,9 +15,9 @@ const flavorTextures = {
 
 const capTextures = {
  lemonLime: "/labels/test8.png",
-  grape: "/labels/lemon2.png",
-  blackCherry: "/labels/design.png",
-  strawberryLemonade: "/labels/coconut.png",
+  grape: "/labels/coconut.jpg",
+  blackCherry: "/labels/rose.jpg",
+  strawberryLemonade: "/labels/watermelon.jpg",
   watermelon: "/labels/lemon2.png",
   test: "/labels/des2.png",
   test2:"/labels/Group 22.png"
